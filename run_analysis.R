@@ -63,6 +63,8 @@ merged_cut_dataset_with_sub_act["activity"] <- sapply(select(merged_cut_dataset_
 ##    set with the average of each variable for each activity and each subject. ---------------------
 by_activity_sub <- merged_cut_dataset_with_sub_act %>% group_by(activity, subject)
 summ <- by_activity_sub %>% summarise_all(.funs = mean)
+write.table(x = summ, file = "table.txt", row.names = FALSE)
+summ
 
     
     
