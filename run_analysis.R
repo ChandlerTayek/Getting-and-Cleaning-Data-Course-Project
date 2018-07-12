@@ -29,9 +29,9 @@ feature_names <- sub(pattern = "\\d+ ", replacement = "", x = feature_names)
 subject_train_table <- read_table(subjects_train_path, col_names = "subject")
 subject_test_table <- read_table(subjects_test_path, col_names="subject")
 train_data <- read_table(train_path, col_names = feature_names)
-train_labels <- read_table(label_train_path, col_names = "activity")
+train_labels <- read_table(label_train_path, col_names = "activity.name")
 test_data <- read_table(test_path, col_names = feature_names)
-test_labels <- read_table(label_test_path, col_names = "activity")
+test_labels <- read_table(label_test_path, col_names = "activity.name")
 activities <- read_table(activities_path, col_names = FALSE)
 activities <- select(activities, X2)
 
@@ -47,21 +47,36 @@ merged_dataset <- bind_rows(train_data_and_subjects, test_data_and_subjects)
 ## 2. Extracts only the measurements on the mean and standard deviation for each measurement.--------
 names_of_mean_and_std <- names(select(merged_dataset, grep(pattern = "mean\\(\\)|std", x = names(merged_dataset))))
 merged_cut_dataset <- select(merged_dataset, names_of_mean_and_std)
-merged_cut_dataset_with_sub_act <- bind_cols(merged_dataset["subject"], merged_dataset["activity"], merged_cut_dataset)
+merged_cut_dataset_with_sub_act <- bind_cols(merged_dataset["subject"], merged_dataset["activity.name"], merged_cut_dataset)
 
 
 ## 3.Uses descriptive activity names to name the activities in the data set.-------------------------
 #Change the labels to describtive activities
-merged_cut_dataset_with_sub_act["activity"] <- sapply(select(merged_cut_dataset_with_sub_act, activity), function(x){activities[x,]})
-
+merged_cut_dataset_with_sub_act["activity.name"] <- sapply(select(merged_cut_dataset_with_sub_act, activity.name), function(x){activities[x,]})
+var_names <- names(merged_cut_dataset_with_sub_act)
 
 ## 4. Appropriately labels the data set with descriptive variable names.-----------------------------
-## The variable names without the numbers are appropriate names to use because of how
-## short and descriptive they are.
+var_names <- sapply(var_names, tolower)
+var_names <- unname(obj = var_names)
+var_names <- sub(pattern = "\\.", replacement = "", x = var_names)
+var_names <- sub(pattern = "^t", replacement = "time", x = var_names)
+var_names <- sub(pattern = "acc", replacement = "acceleration", x = var_names)
+var_names <- sub(pattern = "f", replacement = "frequency", x = var_names)
+var_names <- gsub(pattern = "-", replacement = "", x = var_names)
+var_names <- sub(pattern = "gyro", replacement = "gyroscope", x = var_names)
+var_names <- sub(pattern = "std", replacement =  ".standardDeviation", x = var_names)
+var_names <- sub(pattern = "\\(\\)", replacement = "", x = var_names)
+var_names <- sub(pattern = "mag", replacement = "magnitude", x = var_names)
+var_names <- sub(pattern = "mean", replacement = ".mean", x = var_names)
+var_names <- sub(pattern = "y$", replacement = ".y", x = var_names)
+var_names <- sub(pattern = "x$", replacement = ".x", x = var_names)
+var_names <- sub(pattern = "z$", replacement = ".z", x = var_names)
+var_names <- sub(pattern = "^activity", replacement = "activity.", x = var_names)
+
 
 ## 5. From the data set in step 4, creates a second, independent tidy data 
-##    set with the average of each variable for each activity and each subject. ---------------------
-by_activity_sub <- merged_cut_dataset_with_sub_act %>% group_by(activity, subject)
+#     set with the average of each variable for each activity and each subject. ---------------------
+by_activity_sub <- merged_cut_dataset_with_sub_act %>% group_by(subject, activity.name)
 summ <- by_activity_sub %>% summarise_all(.funs = mean)
 write.table(x = summ, file = "table.txt", row.names = FALSE)
 summ
