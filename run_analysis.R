@@ -60,19 +60,22 @@ var_names <- sapply(var_names, tolower)
 var_names <- unname(obj = var_names)
 var_names <- sub(pattern = "\\.", replacement = "", x = var_names)
 var_names <- sub(pattern = "^t", replacement = "time", x = var_names)
-var_names <- sub(pattern = "acc", replacement = "acceleration", x = var_names)
+var_names <- sub(pattern = "acc", replacement = "Acceleration", x = var_names)
 var_names <- sub(pattern = "f", replacement = "frequency", x = var_names)
 var_names <- gsub(pattern = "-", replacement = "", x = var_names)
-var_names <- sub(pattern = "gyro", replacement = "gyroscope", x = var_names)
+var_names <- sub(pattern = "gyro", replacement = "Gyroscope", x = var_names)
 var_names <- sub(pattern = "std", replacement =  ".standardDeviation", x = var_names)
 var_names <- sub(pattern = "\\(\\)", replacement = "", x = var_names)
-var_names <- sub(pattern = "mag", replacement = "magnitude", x = var_names)
+var_names <- sub(pattern = "mag", replacement = "Magnitude", x = var_names)
 var_names <- sub(pattern = "mean", replacement = ".mean", x = var_names)
-var_names <- sub(pattern = "y$", replacement = ".y", x = var_names)
-var_names <- sub(pattern = "x$", replacement = ".x", x = var_names)
-var_names <- sub(pattern = "z$", replacement = ".z", x = var_names)
+var_names <- sub(pattern = "y$", replacement = ".Y", x = var_names)
+var_names <- sub(pattern = "x$", replacement = ".X", x = var_names)
+var_names <- sub(pattern = "z$", replacement = ".Z", x = var_names)
 var_names <- sub(pattern = "^activity", replacement = "activity.", x = var_names)
+var_names <- sub(pattern = "body", replacement = "Body", x = var_names)
+var_names <- sub(pattern = "jerk", replacement = "Jerk", x = var_names)
 
+names(merged_cut_dataset_with_sub_act) <- var_names
 
 ## 5. From the data set in step 4, creates a second, independent tidy data 
 #     set with the average of each variable for each activity and each subject. ---------------------
